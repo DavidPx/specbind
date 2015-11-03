@@ -29,6 +29,7 @@ namespace SpecBind
         private const string WaitForListElementToContainItemsRegex = @"I wait for (.+) to contain items";
         private const string WaitForListElementToContainItemsWithTimeoutRegex = @"I wait (\d+) seconds? for (.+) to contain items";
         private const string WaitForActiveViewRegex = @"I wait for the view to become active";
+        private const string WaitForListElementToContainCertainNumberOfItemsRegex = @"I wait for (.+) to contain (\d+) items";
 
         // The following Regex items are for the given "past tense" form
         private const string GivenWaitToSeeElementRegex = @"I waited to see (.+)";
@@ -42,6 +43,7 @@ namespace SpecBind
         private const string GivenWaitForListElementToContainItemsRegex = @"I waited for (.+) to contain items";
         private const string GivenWaitForListElementToContainItemsWithTimeoutRegex = @"I waited (\d+) seconds? for (.+) to contain items";
         private const string GivenWaitForActiveViewRegex = @"I waited for the view to become active";
+        private const string GivenWaitForListElementToContainCertainNumberOfItemsRegex = @"I waited for (.+) to contain (\d+) items";
 
         private readonly IActionPipelineService actionPipelineService;
 
@@ -185,6 +187,22 @@ namespace SpecBind
         }
 
         /// <summary>
+		/// Waits for a list to contain a certain number of items
+		/// </summary>
+		/// <param name="propertyName"></param>
+		/// <param name="numberOfItems"></param>
+		[Given(GivenWaitForListElementToContainCertainNumberOfItemsRegex)]
+		[When(WaitForListElementToContainCertainNumberOfItemsRegex)]
+		[Then(WaitForListElementToContainCertainNumberOfItemsRegex)]
+		public void WaitForListElementToContainANumberOfItems(string propertyName, int numberOfItems)
+		{
+			var page = this.GetPageFromContext();
+
+			var context = new WaitForListItemsAction.WaitForListItemsContext(propertyName.ToLookupKey(), GetTimeSpan(0), numberOfItems);
+			this.actionPipelineService.PerformAction<WaitForListItemsAction>(page, context).CheckResult();
+		}
+
+		/// <summary>
         /// I wait for the view to be active step.
         /// </summary>
         [Given(GivenWaitForActiveViewRegex)]
